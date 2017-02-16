@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Ajax Zip</title>
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+	<style>
+		.entry {
+			margin-top: 50px;
+		}
+
+	</style>
+</head>
+<body>
+
+	<div class="container">
+		<div class="row">
+			<div class="col-md-8 col-md-offset-2">
+				<div id="entry" class="entry">
+					Zip code: <input id="zipcode" type="text" name="zipcode">
+					<button id="ajax-button" class="btn btn-primary">Submit</button>
+				</div>
+
+				<br>
+				<div>Location: <span id="location"></span></div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		var api = 'http://maps.googleapis.com/maps/api/geocode/json';
+
+		var findLocation = function(){
+			var zipcode = document.getElementById('zipcode');
+			var url = api + '?address=' + zipcode.value;
+
+			var xhr = new XMLHttpRequest();
+			xhr.open('GET', url, true);
+
+			xhr.onreadystatechange = function(){
+				if(xhr.readyState < 4){
+					showLoading();
+				}
+
+				if(xhr.readyState === 4 && xhr.status === 200){
+					outputLocation(xhr.responseText);
+				}
+			}
+
+			xhr.send();
+		}
+
+		function outputLocation(data){
+			var target = document.getElementById('location');
+			var json = JSON.parse(data);
+			var address = json.results[0].formatted_address;
+			target.innerHTML = address;
+		}
+
+		function showLoading(){
+			var target = document.getElementById('location');
+			target.innerHTML = "Loading...";
+		}
+
+		var button = document.getElementById("ajax-button");
+		button.addEventListener('click', findLocation);
+	</script>
+
+</body>
+</html>
